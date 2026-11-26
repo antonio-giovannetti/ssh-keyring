@@ -1,0 +1,58 @@
+# Template: install.sh sostituisce @USER@, @APP_DIR@, @NODE_BIN@ e @SSH_DIR@.
+[Unit]
+Description=Keyring web app (SSH key login, role and name-scoped access)
+Documentation=file://@APP_DIR@/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+Group=@USER@
+WorkingDirectory=@APP_DIR@
+
+# KEYRING_KEY (obbligatoria), HOST, PORT, COOKIE_SECURE. Leggibile da root e dall'utente del servizio.
+EnvironmentFile=/etc/ssh-keyring/keyring.env
+Environment=NODE_ENV=production
+
+ExecStart=@NODE_BIN@ @APP_DIR@/server.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=15
+
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+# /tmp privato: ssh-keygen riceve qui i file temporanei delle firme.
+PrivateTmp=yes
+PrivateDevices=yes
+# File system di sola lettura, tranne i percorsi in ReadWritePaths.
+ProtectSystem=strict
+# /home è di sola lettura (serve per Node.js installato con nvm).
+ProtectHome=read-only
+# Unico percorso scrivibile: voci cifrate e audit log.
+ReadWritePaths=@APP_DIR@/data
+# Le chiavi SSH dell'utente non devono essere leggibili dall'app.
+InaccessiblePaths=@SSH_DIR@
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+{
+  "name": "ssh-keyring",
+  "version": "1.0.0",
+  "description": "Keyring web app with SSH-key login and read/write roles",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

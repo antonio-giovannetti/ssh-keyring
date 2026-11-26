@@ -1,0 +1,10 @@
+{
+  "users": [
+        {
+      "name": "antonio-giovannetti",
+      "level": 5,
+      "publicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC07W0g1edH75kASTCMLDJy7ZUoG7AFRBVGQQbrCR1MIW3ojCseQ1nuimerVLqYmXuI8/0Jr7uFVvegG6a1VQqjJABXwexEn+sVkoFqVg+k1nV7N5Kg7F3NYhBQmkdOGQdfAKaQrnUQZN8afuJbXlNnrvG+kz7tw3mo4bZX5Cv2HkVnaNkSLuiZUTWjRM/NqIxoW/b0LlAKC3dsAFir27zahqejZq7zOlTXAIz3WVqxjoVPQHggQ6F7mCVyBo9W/UbRCPZRuXP2NM3AopmYqFVRxAoKHeLpnBf6R0JC4FM2sTH+/RgSjSxkmxtx2vqgenhBelpX5XBBBdkpuSYo6AvdqZqwktZyjQ0HgWCA4aWDvSKqATOfJuS15V7ojDWwdQbVc55uyd+MG4lD1y6zJDHxNQHg6M5WR+NPX7tpPHSzpFZ/NV//0swMHOlSMCCTSqUiJKoStlkBn01nNIJFA8CMpFuLKJ1bTa4LrTBqiEDW1goxTaef4ogdhhmfmpcuiec= antonio@antonio-dxc",
+      "role": "write"
+    }
+  ]
+}

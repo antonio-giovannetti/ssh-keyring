@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portachiavi</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <strong>Portachiavi (password/secret)</strong>
+  <span id="who" class="muted"></span>
+  <span id="role" class="badge"></span>
+  <span class="grow"></span>
+  <button id="logout" hidden>Esci</button>
+</header>
+
+<main>
+  <!-- Login: file della chiave, firma nel browser, accesso automatico -->
+  <section id="login" class="card narrow" hidden>
+    <h1>Accesso con chiave SSH</h1>
+    <p class="muted">Scegli il file della tua chiave privata. Viene letto e firmato nel browser: non viene inviato al server e l'accesso parte da solo.
+<br>Di solito &egrave; un file che si trova sotto la cartella <i>home</i> dell'utente, nella cartella ".ssh"</p>
+
+    <input id="keyfile" type="file" accept="*" hidden>
+    <div class="row">
+      <button id="pick" class="primary">Scegli file chiave privata</button>
+      <span id="keyinfo" class="muted small"></span>
+    </div>
+    <p id="loginErr" class="error" role="alert"></p>
+
+    <details id="fallback">
+      <summary>Chiave con passphrase o browser non compatibile</summary>
+      <p class="muted small">Firma dal terminale: copia il comando, incollalo nel terminale e incolla qui l'output.</p>
+      <label>Percorso della chiave privata
+        <input id="keypath" value="~/.ssh/id_ed25519" spellcheck="false" autocomplete="off">
+      </label>
+      <div class="cmdbox">
+        <pre id="cmd"></pre>
+        <button id="copy">Copia comando</button>
+      </div>
+      <label>Output del terminale
+        <textarea id="sig" rows="6" spellcheck="false" placeholder="Incolla qui l'output del comando"></textarea>
+      </label>
+    </details>
+      <div class="row">
+        <span id="timer" class="muted small"></span>
+        <span class="grow"></span>
+        <button id="new">Nuova sfida</button>
+        <button id="submit">Accedi</button>
+      </div>
+  </section>
+
+  <!-- Keyring -->
+  <section id="vault" hidden>
+    <div class="row toolbar">
+      <input id="search" placeholder="Cerca…" autocomplete="off">
+      <button id="add" class="primary">+ Nuova voce</button>
+    </div>
+    <div id="list" class="list"></div>
+  </section>
+
+  <!-- Editor (solo ruolo write) -->
+  <section id="editor" class="card narrow" hidden>
+    <form id="editorForm" autocomplete="off">
+      <h2 id="editorTitle"></h2>
+      <label>Nome (usa / per le cartelle, es. prod/db/main)<input id="f-name" name="entry-name" autocomplete="off"></label>
+      <label>Username<input id="f-username" name="entry-username" autocomplete="off"></label>
+      <label>Segreto
+        <div class="row">
+          <input id="f-secret" name="entry-secret" type="password" autocomplete="new-password">
+          <button id="gen" type="button">Genera</button>
+        </div>
+      </label>
+      <label>Livello di sicurezza
+        <select id="f-level" name="entry-level">
+          <option value="1">1 – basso</option>
+          <option value="2">2</option>
+          <option value="3">3 – medio</option>
+          <option value="4">4</option>
+          <option value="5">5 – alto</option>
+        </select>
+      </label>
+      <label>Note<textarea id="f-notes" name="entry-notes" rows="3"></textarea></label>
+      <p id="editorErr" class="error" role="alert"></p>
+      <div class="row">
+        <button id="f-delete" type="button" class="danger" hidden>Elimina</button>
+        <span class="grow"></span>
+        <button id="cancel" type="button">Annulla</button>
+        <button id="save" type="submit" class="primary">Salva</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status"></div>
+<script src="sshsign.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

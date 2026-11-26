@@ -1,0 +1,65 @@
+:root {
+  --bg: #f6f7f9; --surface: #fff; --text: #1b1f24; --muted: #6b7280; --border: #e2e5ea;
+  --accent: #2563eb; --accent-text: #fff; --danger: #dc2626; --code: #eef1f5;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f1115; --surface: #171a21; --text: #e6e8ec; --muted: #9aa3b2;
+          --border: #2a2f3a; --accent: #5b8cff; --accent-text: #0b0d12; --danger: #f87171;
+          --code: #222733; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+[hidden] { display: none !important; }
+h1 { font-size: 20px; margin: 0 0 6px; }
+h2 { font-size: 18px; margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.center { text-align: center; }
+.grow { flex: 1; }
+.error { color: var(--danger); min-height: 1.4em; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+.narrow { max-width: 620px; margin: 8vh auto 0; }
+.top { display: flex; align-items: center; gap: 12px; padding: 12px 18px;
+  background: var(--surface); border-bottom: 1px solid var(--border); }
+main { max-width: 860px; margin: 0 auto; padding: 18px; }
+pre, code { background: var(--code); border-radius: 6px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+pre { padding: 10px 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+code { padding: 1px 4px; }
+ol li { margin-bottom: 14px; }
+input, textarea, select { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit; margin-top: 4px; }
+textarea { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+label { display: block; margin: 12px 0; font-weight: 500; font-size: 14px; }
+label .row { margin-top: 4px; }
+button { font: inherit; font-size: 14px; padding: 7px 13px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text); white-space: nowrap; }
+button:hover { filter: brightness(.96); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
+button.danger { color: var(--danger); }
+input:focus, textarea:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.row input { margin-top: 0; }
+.toolbar { margin-bottom: 14px; }
+.toolbar input { flex: 1; min-width: 160px; margin: 0; }
+.badge { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+.list { display: flex; flex-direction: column; gap: 8px; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.meta { display: flex; flex-direction: column; min-width: 0; }
+.meta strong, .meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.secret { min-width: 0; }
+.secret code { word-break: break-all; }
+.actions { display: flex; gap: 6px; flex-wrap: wrap; grid-column: 1 / -1; justify-content: flex-end; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0;
+  background: var(--text); color: var(--bg); padding: 9px 15px; border-radius: 8px; font-size: 14px;
+  transition: opacity .2s, transform .2s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.cmdbox { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0 14px; }
+.cmdbox pre { flex: 1; margin: 0; min-height: 2.5em; }
+.folder { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 10px;
+  background: var(--surface); border: 1px dashed var(--border); border-radius: 8px; }
+.tree-toggle { padding: 2px 8px; min-width: 2.2em; }
+/* Rientro per livello di profondità (--depth impostato da app.js) */
+.folder, .item { margin-left: calc(var(--depth, 0) * 24px); }
