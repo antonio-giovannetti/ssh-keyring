@@ -3,6 +3,7 @@
  * Firma SSHSIG nel browser per chiavi OpenSSH NON protette da passphrase:
  *   - ssh-ed25519
  *   - ssh-rsa (firma rsa-sha2-512, come `ssh-keygen -Y sign`)
+ *   - ecdsa-sha2-nistp256 (firma con SHA-256, come `ssh-keygen -Y sign`)
  * Il file della chiave viene letto dal browser, la firma è calcolata qui e
  * la chiave privata non viene inviata a nessuno.
  *
@@ -31,6 +32,17 @@ const SSHSign = (function () {
   function sshString(data) {
     const b = typeof data === "string" ? enc.encode(data) : data;
     return concat(u32(b.length), b);
+  }
+
+  // mpint SSH di un intero senza segno (big-endian): niente zeri iniziali, zero di padding se il bit alto è 1
+  function sshMpint(bytes) {
+    let i = 0;
+    while (i < bytes.length - 1 && bytes[i] === 0) i++;
+    const v = bytes.subarray(i);
+    const pad = v.length && (v[0] & 0x80) ? 1 : 0;
+    const out = new Uint8Array(pad + v.length);
+    out.set(v, pad);
+    return sshString(out);
   }
 
   function b64decode(s) {
@@ -156,6 +168,28 @@ const SSHSign = (function () {
       return { type: "rsa", pubBlob, jwk, comment };
     }
 
+    if (keyType === "ecdsa-sha2-nistp256") {
+      const curve = dec.decode(p.string());
+      const q = new Uint8Array(p.string());    // punto pubblico: 0x04 || X (32) || Y (32)
+      const d = p.string();                    // scalare privato (mpint)
+      const comment = dec.decode(p.string());
+      if (curve !== "nistp256" || q.length !== 65 || q[0] !== 4) {
+        throw new Error("Chiave ECDSA non supportata: solo nistp256");
+      }
+      const dBytes = new Uint8Array(32);       // mpint: zeri iniziali da togliere, poi allineare a 32 byte
+      const dTrim = d.length > 32 ? d.subarray(d.length - 32) : d;
+      dBytes.set(dTrim, 32 - dTrim.length);
+      const jwk = {
+        kty: "EC",
+        crv: "P-256",
+        x: b64url(q.subarray(1, 33)),
+        y: b64url(q.subarray(33, 65)),
+        d: b64url(dBytes),
+        ext: true,
+      };
+      return { type: "ecdsa", pubBlob, jwk, comment };
+    }
+
     throw new Error(`Tipo di chiave non supportato nel browser: ${keyType}`);
   }
 
@@ -170,6 +204,11 @@ const SSHSign = (function () {
       if (parsed.type === "ed25519") {
         return await crypto.subtle.importKey(
           "pkcs8", concat(PKCS8_PREFIX, parsed.seed), { name: "Ed25519" }, false, ["sign"]
+        );
+      }
+      if (parsed.type === "ecdsa") {
+        return await crypto.subtle.importKey(
+          "jwk", parsed.jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]
         );
       }
       return await crypto.subtle.importKey(
@@ -195,6 +234,12 @@ const SSHSign = (function () {
     if (parsed.type === "ed25519") {
       sigAlg = "ssh-ed25519";
       sig = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, key, signedData));
+    } else if (parsed.type === "ecdsa") {
+      // Come OpenSSH: ECDSA P-256 firma il messaggio con SHA-256.
+      // WebCrypto dà r||s (32+32 byte); SSH li vuole come due mpint dentro una stringa.
+      sigAlg = "ecdsa-sha2-nistp256";
+      const raw = new Uint8Array(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, signedData));
+      sig = concat(sshMpint(raw.subarray(0, 32)), sshMpint(raw.subarray(32, 64)));
     } else {
       sigAlg = "rsa-sha2-512";
       sig = new Uint8Array(await crypto.subtle.sign({ name: "RSASSA-PKCS1-v1_5" }, key, signedData));

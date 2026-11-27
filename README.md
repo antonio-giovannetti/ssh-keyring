@@ -58,7 +58,7 @@ Il server usa solo Node.js (nessuna dipendenza esterna) e `ssh-keygen` di OpenSS
 La chiave non viene caricata sul server: la firma avviene nel browser e il server riceve solo la firma.
 
 **Limiti della firma nel browser:**
-- Funziona con chiavi **ed25519** e **RSA** senza passphrase (RSA con almeno 2048 bit) e con browser recenti (Chrome 137+, Firefox 129+, Safari 17+ per Ed25519; RSA funziona anche su versioni precedenti).
+- Funziona con chiavi **ed25519**, **RSA** (almeno 2048 bit) ed **ECDSA nistp256** senza passphrase, e con browser recenti (Chrome 137+, Firefox 129+, Safari 17+ per Ed25519; RSA ed ECDSA funzionano anche su versioni precedenti).
 - Per chiavi con passphrase, la pagina apre la sezione **Chiave con passphrase**: lì copi un comando da eseguire nel terminale (macOS, Linux, WSL o Git Bash), poi incolli l'output.
 
 La sfida scade dopo 2 minuti ed è monouso. Se il login fallisce, scegli di nuovo il file.
